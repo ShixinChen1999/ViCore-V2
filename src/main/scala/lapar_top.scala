@@ -1,7 +1,5 @@
 import chisel3._
-import chisel3.core.Analog
 import chisel3.util._
-import chisel3.core.Module.{clock, reset}
 import chisel3.experimental._
 
 import javax.swing.plaf.metal.MetalTreeUI

@@ -1,8 +1,5 @@
 package lapar_package
 
-
-
-
 import chisel3._
 import chisel3.core.Analog
 
@@ -18,6 +15,7 @@ trait nConfig {
   val LEAKY_RELU_IN_DW = 48
   val LEAKY_RELU_OUT_DW = 48
 }
+
 trait Config {
   val IN_HIGHT=360//12*16
   val IN_WIDTH=640////16
