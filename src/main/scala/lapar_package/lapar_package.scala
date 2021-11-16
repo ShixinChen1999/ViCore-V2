@@ -2,6 +2,7 @@ package lapar_package
 
 import chisel3._
 import chisel3.core.Analog
+import chisel3.util._
 
 
 trait nConfig {
@@ -219,6 +220,62 @@ class CfgIO extends Bundle with nConfig{
   val value  = Output(UInt(32.W))
 }
 
+
+//class OneShortTimer(step: Int,goal_num:Int) extends Module{
+//  val io=IO(new Bundle() {
+//    val start_vaild=Input(Bool())
+//    val cnt=Output(UInt(log2Ceil(goal_num).W))//需要的位数
+//    val done=Output(Bool())
+//  })
+//  val reg = RegInit (goal_num.U(log2Ceil(goal_num).W))
+//
+//  val done = reg === 0.U
+//  val next = RegInit (0.U)
+//  when(io.start_vaild){
+//    when(! done) {
+//      next := reg - step.U
+//    }.otherwise{
+//      next :=0.U
+//    }
+//  }
+//  reg := next
+//  io.cnt:=reg
+//  io.done:=done
+//}
+//
+//object OneShortTimer{
+//  def apply(valid:Bool,step: Int,goal_num:Int):(UInt,Bool)={
+//    val inst=Module(new OneShortTimer(step,goal_num))
+//    inst.io.start_vaild:=valid
+//    (inst.io.cnt,inst.io.done)
+//  }
+//}
+
+class OneShotTimer(WT_BYTE_NUM:Int,PARAM_SIZE: Int) extends Module{
+  val io=IO(new Bundle() {
+    //val rst=Input(Bool())
+    //val ap_start=Input(Bool())
+    val start_valid=Input(Bool())
+    //val clk=Input(Clock())
+    val done=Output(Bool())
+  })
+  val cnt_reg=RegInit(0.U(log2Ceil(PARAM_SIZE).W))
+  //when(io.rst){
+  //  param_cyc_cnt:= 0.U
+  //}.elsewhen(io.ap_start){
+  //  param_cyc_cnt:= 0.U
+  //}.otherwise{
+  cnt_reg:= RegNext(Mux(io.start_valid,cnt_reg+WT_BYTE_NUM.U,cnt_reg))
+  //}
+  io.done:=(cnt_reg>=PARAM_SIZE.U)
+}
+object OneShotTimer{
+  def apply(valid:Bool,step:Int,goal_num: Int):Bool={
+    val inst=Module(new OneShotTimer(step,goal_num))
+    inst.io.start_valid:=valid
+    inst.io.done
+  }
+}
 
 class Conter_pause extends Module{
   val io=IO(new Bundle{
