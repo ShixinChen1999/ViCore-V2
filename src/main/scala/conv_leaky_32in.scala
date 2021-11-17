@@ -161,6 +161,8 @@ class conv_leaky_32in extends Module with Conv_config{
   data_seg.io.base:=io.base
   data_seg.io.data_in:=io.data_in
   io.data_out:=data_seg.io.data_out
+
+
 }
 
 object conv_leaky_32in extends App{
